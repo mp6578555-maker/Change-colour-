@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Premium ImVec4 Picker</title>
+<style>
+:root{
+    --accent:#00ff88;
+}
+body{
+    background:radial-gradient(circle at top,#0f2027,#000);
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Segoe UI,Arial,sans-serif;
+    color:white;
+}
+.panel{
+    width:340px;
+    background:#121212;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 0 30px rgba(0,255,136,0.35);
+}
+.title{
+    font-size:18px;
+    font-weight:600;
+    margin-bottom:12px;
+    color:var(--accent);
+    text-align:center;
+}
+.preview{
+    height:70px;
+    border-radius:12px;
+    border:2px solid #222;
+    margin-bottom:12px;
+}
+input[type=color],input[type=range]{
+    width:100%;
+    margin:6px 0;
+}
+.presets{
+    display:flex;
+    gap:8px;
+    margin:10px 0;
+}
+.preset{
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    cursor:pointer;
+    border:2px solid #000;
+}
+.code{
+    background:#000;
+    padding:10px;
+    border-radius:10px;
+    font-family:monospace;
+    font-size:13px;
+    margin-top:8px;
+    color:#00ff88;
+}
+.btns{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+button{
+    flex:1;
+    background:#0f0f0f;
+    border:1px solid var(--accent);
+    color:var(--accent);
+    padding:8px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:0.2s;
+}
+button:hover{
+    background:var(--accent);
+    color:#000;
+}
+</style>
+</head>
+<body>
+
+<div class="panel">
+    <div class="title">ImVec4 Premium Color Picker</div>
+
+    <div class="preview" id="preview"></div>
+
+    <input type="color" id="color" value="#009900">
+    Alpha
+    <input type="range" id="alpha" min="0" max="1" step="0.01" value="1">
+
+    <!-- Preset Colors -->
+    <div class="presets">
+        <div class="preset" style="background:#00ff00" onclick="setColor('#00ff00')"></div>
+        <div class="preset" style="background:#0099ff" onclick="setColor('#0099ff')"></div>
+        <div class="preset" style="background:#ff4444" onclick="setColor('#ff4444')"></div>
+        <div class="preset" style="background:#ffaa00" onclick="setColor('#ffaa00')"></div>
+        <div class="preset" style="background:#aa55ff" onclick="setColor('#aa55ff')"></div>
+    </div>
+
+    <div class="code" id="imvec4">ImVec4(0.00f, 0.60f, 0.00f, 1.00f)</div>
+    <div class="code" id="imcol32">IM_COL32(0,153,0,255)</div>
+
+    <div class="btns">
+        <button onclick="copyText('imvec4')">Copy ImVec4</button>
+        <button onclick="copyText('imcol32')">Copy IM_COL32</button>
+    </div>
+</div>
+
+<script>
+const color=document.getElementById("color");
+const alpha=document.getElementById("alpha");
+const preview=document.getElementById("preview");
+const imvec4=document.getElementById("imvec4");
+const imcol32=document.getElementById("imcol32");
+
+function update(){
+    const hex=color.value;
+    const r=parseInt(hex.substr(1,2),16);
+    const g=parseInt(hex.substr(3,2),16);
+    const b=parseInt(hex.substr(5,2),16);
+    const a=parseFloat(alpha.value);
+
+    preview.style.background=`rgba(${r},${g},${b},${a})`;
+
+    imvec4.textContent=
+        `ImVec4(${(r/255).toFixed(2)}f, ${(g/255).toFixed(2)}f, ${(b/255).toFixed(2)}f, ${a.toFixed(2)}f)`;
+
+    imcol32.textContent=
+        `IM_COL32(${r},${g},${b},${Math.round(a*255)})`;
+}
+
+function setColor(hex){
+    color.value=hex;
+    update();
+}
+
+function copyText(id){
+    navigator.clipboard.writeText(document.getElementById(id).textContent);
+}
+
+color.addEventListener("input",update);
+alpha.addEventListener("input",update);
+update();
+</script>
+
+</body>
+</html>
